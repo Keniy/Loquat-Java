@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.loquat.user.mapper.UserMapper">
+    <resultMap id="BaseResultMap" type="com.loquat.user.entity.User">
+		<id property="id" column="id" jdbcType="BIGINT"/>
+		<result property="nickname" column="nickname" jdbcType="VARCHAR"/>
+		<result property="username" column="username" jdbcType="VARCHAR"/>
+		<result property="password" column="password" jdbcType="VARCHAR"/>
+		<result property="email" column="email" jdbcType="VARCHAR"/>
+		<result property="telephone" column="telephone" jdbcType="VARCHAR"/>
+		<result property="phone" column="phone" jdbcType="VARCHAR"/>
+		<result property="rePassword" column="re_password" jdbcType="VARCHAR"/>
+		<result property="historyPassword" column="history_password" jdbcType="VARCHAR"/>
+		<result property="address" column="address" jdbcType="VARCHAR"/>
+		<result property="userface" column="userface" jdbcType="VARCHAR"/>
+		<result property="enabled" column="enabled" jdbcType="BOOLEAN"/>
+		<result property="remark" column="remark" jdbcType="VARCHAR"/>
+		<result property="token" column="token" jdbcType="VARCHAR"/>
+    </resultMap>
+    
+    <resultMap id="lazyLoadRoles" type="com.loquat.user.entity.User" extends="BaseResultMap">
+    	<collection property="roles" column="id" ofType="com.loquat.user.entity.Role" select="com.loquat.user.mapper.UserMapper.getRolesByUserId">	
+    	</collection>
+    </resultMap>
+    
+    <resultMap id="eagerLoadRoles" type="com.loquat.user.entity.User" extends="BaseResultMap">
+    	<collection property="roles" ofType="com.loquat.user.entity.Role">
+    		<id property="id" column="rid"></id>
+    		<result property="name" column="rname"></result>
+    		<result property="nameZh" column="rnameZh"></result>
+    	</collection>
+    </resultMap>
+    
+    <select id="getByUserName" resultMap="lazyLoadRoles">
+    	select * from user where username =#{username}
+    </select>
+    
+    <select id="getRolesByUserId" resultType="com.loquat.user.entity.Role">
+    	select r.* from user_role ur, role r where ur.role_id = r.id and ur.user_id =#{id}
+   	</select>
+</mapper>
